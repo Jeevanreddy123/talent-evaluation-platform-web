@@ -1,0 +1,56 @@
+# Talent Evaluation Platform
+
+A web-based platform designed to streamline the technical evaluation process for job candidates and associates. It provides a centralized system for managing questions, assigning evaluations, and conducting assessments for various technical roles.
+
+## Key Features
+
+### Admin
+- **Question Management**: Upload, view, and manage question banks from `.xlsx` files for various technologies.
+- **Evaluation Assignment**: Assign candidates to evaluators, schedule evaluation dates, and attach resumes.
+- **User Management**: View and manage user roles and details within the system.
+
+### Evaluator
+- **Dashboard**: View pending and completed evaluations at a glance.
+- **Candidate Evaluation**: Access candidate details, resumes, and a dedicated interface for conducting evaluations.
+- **Question Lookup**: Search and filter the question bank by technology and difficulty level during an evaluation.
+
+### General
+- **User Registration**: A secure registration system for new users.
+
+## Tech Stack
+
+- **Frontend**: Vue.js 3 (with Composition API & `<script setup>`)
+- **UI Framework**: Vuetify 3
+- **State Management**: Pinia
+- **Routing**: Vue Router
+- **HTTP Client**: Axios
+- **Build Tool**: Vite
+- **Language**: JavaScript & TypeScript
+
+## Project Setup
+
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url>
+    cd talent-evaluation-platform-web
+    ```
+
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+
+3.  **Run the development server:**
+    ```bash
+    npm run dev
+    ```
+
+4.  Open your browser and navigate to the local URL provided by Vite (e.g., `http://localhost:5173`).
+
+## Project Structure
+
+The project follows a standard Vue 3 + Vite structure.
+-   `src/components`: Reusable Vue components, organized by feature/role (e.g., `admin`, `Evaluator`, `Registration`).
+-   `src/services`: API call modules for interacting with the backend.
+-   `src/stores`: Pinia state management stores.
+-   `src/router`: Vue Router configuration.
