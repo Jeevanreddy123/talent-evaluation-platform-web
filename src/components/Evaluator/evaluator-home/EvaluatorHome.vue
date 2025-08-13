@@ -113,89 +113,198 @@
             <th>Role</th>
             <th>Tech Stack</th>
             <th>Evaluation Date</th>
+                  <th>Status</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in filteredPending" :key="item.associateId">
-            <td>
-              {{ item.soId }}
-              <a @click="viewResume(item.associateId)">View Resume</a>
+                <tr v-for="evaluation in paginatedCompletedEvaluations" :key="evaluation.soId">
+                  <td>{{ evaluation.soId }}</td>
+                  <td>{{ evaluation.associateId }}</td>
+                  <td>{{ evaluation.associateName }}</td>
+                  <td>{{ evaluation.role }}</td>
+                  <td>{{ evaluation.techStack }}</td>
+                  <td>{{ evaluation.evaluationDate }}</td>
+                  <td>
+                    <v-chip :color="evaluation.status.toLowerCase() === 'selected' ? 'success' : 'error'" size="small">
+                      {{ evaluation.status }}
+                    </v-chip>
             </td>
-            <td>
-              {{ item.associateId }}
-              <router-link :to="`/evaluate-candidate/${item.associateId}`">Quick Evaluation</router-link>
-            </td>
-            <td>
-              {{ item.associateName }}
-              <router-link to="/lookup-question">LookUp Questions</router-link>
-            </td>
-            <td>{{ item.role }}</td>
-            <td>{{ item.techStack }}</td>
-            <td>{{ item.evaluationDate }}</td>
           </tr>
         </tbody>
       </v-table>
+          </v-card-text>
+
     </v-card>
 
-    <v-card class="mt-4">
-      <v-card-title>Completed Evaluations</v-card-title>
-      <v-data-table
-        :headers="completedHeaders"
-        :items="filteredCompleted"
-        :search="search"
-      ></v-data-table>
-    </v-card>
+        <v-row class="mt-4">
+          <v-col class="d-flex justify-center">
+            <v-pagination 
+              v-if="totalPages > 1" 
+              v-model="currentPage" 
+              :length="totalPages"
+              :total-visible="2" 
+              rounded="circle">
+            </v-pagination>
+          </v-col>
+        </v-row>
   </v-container>
+    </v-main>
+  </v-app>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useUserStore } from '../../../stores/userStore';
-import { getData, getResume } from '../../../services/user-home-page-service';
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue'
+import { getData, getResume } from '@/services/user-home-page-service'
 
-const search = ref('');
-const userStore = useUserStore();
+const userName = ref('User Name')
+const searchQuery = ref('')
+const itemsPerPage = 3
 
-const filteredPending = computed(() => {
-  // Filtering logic for pending evaluations
-  return userStore.pendingEvaluations;
-});
+const pendingEvaluations = ref([])
+const completedEvaluations = ref([])
 
-const filteredCompleted = computed(() => {
-  // Filtering logic for completed evaluations
-  return userStore.completedEvaluations;
-});
+const pendingCurrentPage = ref(1)
+const completedCurrentPage = ref(1)
+const currentPage = ref(1)
 
-const completedHeaders = [
-  // Headers for completed evaluations table
-];
-
-const viewResume = async (candidateId: string) => {
+const getEvaluatorData = async () => {
   try {
-    const response = await getResume(candidateId);
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = url;
-    const contentDisposition = response.headers['content-disposition'];
-    let fileName = 'resume.pdf'; // default file name
-    if (contentDisposition) {
-      const fileNameMatch = contentDisposition.match(/filename="?(.+)"?/);
-      if (fileNameMatch && fileNameMatch.length === 2) {
-        fileName = fileNameMatch[1];
-      }
-    }
-    link.setAttribute('download', fileName);
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+    const response = await getData()
+    pendingEvaluations.value = response.data.pendingEvaluations
+    completedEvaluations.value = response.data.completedEvaluations
   } catch (error) {
-    console.error('Error downloading resume:', error);
+    console.error('Error fetching data:', error)
+    pendingEvaluations.value = [
+      {
+        soId: '1233434',
+        associateId: '29232323',
+        associateName: 'John mayor',
+        role: 'Sr. Developer',
+        techStack: 'Java/vue3',
+        evaluationDate: '10-Nov-2023'
+      },
+      {
+        soId: '1233435',
+        associateId: '29232324',
+        associateName: 'Jane Smith',
+        role: 'Sr. Developer',
+        techStack: 'Java/vue3',
+        evaluationDate: '10-Nov-2023'
+      },
+      {
+        soId: '1233436',
+        associateId: '29232325',
+        associateName: 'Alice Johnson',
+        role: 'Jr. Developer',
+        techStack: 'Python/React',
+        evaluationDate: '11-Nov-2023'
+      },
+      {
+        soId: '1233437',
+        associateId: '29232326',
+        associateName: 'Bob Williams',
+        role: 'Sr. Developer',
+        techStack: 'Node.js/Vue3',
+        evaluationDate: '11-Nov-2023'
+      },
+      {
+        soId: '1233438',
+        associateId: '29232327',
+        associateName: 'Charlie Brown',
+        role: 'DevOps Engineer',
+        techStack: 'AWS/Docker',
+        evaluationDate: '12-Nov-2023'
+      },
+      
+    ]
+    completedEvaluations.value = [
+      {
+        soId: '1233434',
+        associateId: '29232323',
+        associateName: 'John mayor',
+        role: 'Sr. Developer',
+        techStack: 'Java/vue3',
+        evaluationDate: '10-Nov-2023',
+        status: 'Selected'
+      },
+      {
+        soId: '1233435',
+        associateId: '29232324',
+        associateName: 'Jane Smith',
+        role: 'Sr. Developer',
+        techStack: 'Java/vue3',
+        evaluationDate: '10-Nov-2023',
+        status: 'Rejected'
+      },
+      
+    ]
   }
-};
+}
 
-onMounted(async () => {
-  const { pending, completed } = await getData();
-  userStore.setPendingEvaluations(pending);
-  userStore.setCompletedEvaluations(completed);
-});
+onMounted(() => {
+  getEvaluatorData()
+})
+
+const filteredPendingEvaluations = computed(() => {
+  if (!searchQuery.value) return pendingEvaluations.value
+  const query = searchQuery.value.toLowerCase()
+  return pendingEvaluations.value.filter(item =>
+    item.soId.toLowerCase().includes(query) ||
+    item.associateId.toLowerCase().includes(query) ||
+    item.associateName.toLowerCase().includes(query) ||
+    item.role.toLowerCase().includes(query) ||
+    item.techStack.toLowerCase().includes(query)
+  )
+})
+
+const filteredCompletedEvaluations = computed(() => {
+  if (!searchQuery.value) return completedEvaluations.value
+  const query = searchQuery.value.toLowerCase()
+  return completedEvaluations.value.filter(item =>
+    item.soId.toLowerCase().includes(query) ||
+    item.associateId.toLowerCase().includes(query) ||
+    item.associateName.toLowerCase().includes(query) ||
+    item.role.toLowerCase().includes(query) ||
+    item.techStack.toLowerCase().includes(query)
+  )
+})
+
+
+const paginatedPendingEvaluations = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  const end = start + itemsPerPage
+  return filteredPendingEvaluations.value.slice(start, end)
+})
+
+
+const paginatedCompletedEvaluations = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  const end = start + itemsPerPage
+  return filteredCompletedEvaluations.value.slice(start, end)
+})
+
+const handleSignout = () => {
+  // Implement signout logic
+}
+
+watch(searchQuery, () => {
+  pendingCurrentPage.value = 1
+  completedCurrentPage.value = 1
+  currentPage.value = 1
+})
+const viewResume = async (evaluation) => {
+  try {
+    const response = await getResume(evaluation.associateId)
+    const file = new Blob([response.data], { type: 'application/pdf' })
+    const fileURL = URL.createObjectURL(file)
+    window.open(fileURL)
+  } catch (error) {
+    console.error('Error fetching resume:', error)
+  }
+}
+
+const totalPages = computed(() => {
+  const totalItems = filteredPendingEvaluations.value.length + filteredCompletedEvaluations.value.length
+  return Math.ceil(totalItems / itemsPerPage)
+})
 </script>
