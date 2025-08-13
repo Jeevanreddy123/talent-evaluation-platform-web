@@ -19,7 +19,7 @@ export const getEvaluators = () => {
 };
 
 export const uploadFile = (formData) => {
-  return axios.post('/admin/upload-file', formData, {
+  return axios.post('/file', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },

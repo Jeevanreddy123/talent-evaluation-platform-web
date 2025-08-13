@@ -4,11 +4,10 @@
       <v-card-title>Upload Questions</v-card-title>
       <v-card-text>
         <v-form>
-          <v-select
+          <v-text-field
             label="Technology/Framework"
             v-model="selectedTechnology"
-            :items="technologies"
-          ></v-select>
+          ></v-text-field>
           <v-file-input
             label="Upload .xlsx file"
             accept=".xlsx"
@@ -52,9 +51,10 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { uploadFile as upload, getUploadedFiles, downloadUploadedFile, deleteUploadedFile } from '../../../services/admin-home';
+import { useUserStore } from '../../../stores/userStore';
 
+const userStore = useUserStore();
 const selectedTechnology = ref(null);
-const technologies = ref([/* ... technologies ... */]);
 const questionFile = ref(null);
 const uploadedFiles = ref([]);
 const uploadedFilesHeaders = [
@@ -71,6 +71,7 @@ const uploadFile = async () => {
   const formData = new FormData();
   formData.append('file', questionFile.value);
   formData.append('technology', selectedTechnology.value);
+  formData.append('uploadedBy', userStore.user.associateId);
   await upload(formData);
   fetchUploadedFiles();
 };

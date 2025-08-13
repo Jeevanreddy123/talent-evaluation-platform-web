@@ -57,17 +57,18 @@ const routes = [
     meta: { requiresAuth: true, role: 'Evaluator' },
   },
   {
-    path: '/evaluate-candidate/:candidateId',
-    name: 'EvaluateCandidate',
-    component: EvaluateCandidate,
-    meta: { requiresAuth: true, role: 'Evaluator' },
-  },
-  {
+    // path: '/evaluate-candidate/:candidateId',
     path: '/evaluate-user',
     name: 'EvaluateUser',
     component: Evaluate_user,
-    meta: { requiresAuth: false },
+    meta: { requiresAuth: true, role: 'Evaluator' },
   },
+  // {
+  //   path: '/evaluate-user',
+  //   name: 'EvaluateUser',
+  //   component: Evaluate_user,
+  //   meta: { requiresAuth: false },
+  // },
 ];
 
 export default routes;
