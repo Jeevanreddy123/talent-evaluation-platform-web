@@ -7,6 +7,7 @@ import UserManagementSystem from '../components/admin/user-management-system/Use
 import EvaluatorHome from '../components/Evaluator/evaluator-home/EvaluatorHome.vue';
 import LookUpQuestion from '../components/Evaluator/lookup-question/LookUpQuestion.vue';
 import EvaluateCandidate from '../components/Evaluator/evaluate-candidate/EvaluateCandidate.vue';
+import Evaluate_user from '../components/Evaluator/evaluate-user/Evaluate_user.vue';
 
 const routes = [
   {
@@ -60,6 +61,12 @@ const routes = [
     name: 'EvaluateCandidate',
     component: EvaluateCandidate,
     meta: { requiresAuth: true, role: 'Evaluator' },
+  },
+  {
+    path: '/evaluate-user',
+    name: 'EvaluateUser',
+    component: Evaluate_user,
+    meta: { requiresAuth: false },
   },
 ];
 
