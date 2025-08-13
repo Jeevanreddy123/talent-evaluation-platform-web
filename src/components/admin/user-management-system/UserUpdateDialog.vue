@@ -28,7 +28,7 @@ import { ref, watch, defineProps, defineEmits } from 'vue';
 import { updateUser } from '../../../services/admin-home';
 
 const props = defineProps({ user: Object, modelValue: Boolean });
-emits = defineEmits(['update:modelValue', 'user-updated']);
+const emits = defineEmits(['update:modelValue', 'user-updated']);
 
 const dialog = ref(props.modelValue);
 const editableUser = ref({ ...props.user });
@@ -45,7 +45,11 @@ const close = () => {
 };
 
 const update = async () => {
-  await updateUser(editableUser.value);
+  const payload = { ...editableUser.value };
+  payload.role = payload.systemRole; // Add the 'role' key with the value from 'systemRole'
+  delete payload.systemRole; // Remove the 'systemRole' key
+
+  await updateUser(payload);
   emits('user-updated');
   close();
 };

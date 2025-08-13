@@ -8,8 +8,8 @@
             <v-col cols="12" md="6">
               <v-text-field label="SO ID" v-model="evaluation.soId"></v-text-field>
               <v-text-field label="SO Role" v-model="evaluation.soRole"></v-text-field>
-              <v-text-field label="Associate ID" v-model="evaluation.associateId"></v-text-field>
-              <v-text-field label="Stack" v-model="evaluation.stack"></v-text-field>
+              <v-text-field label="Candidate ID" v-model="evaluation.candidateId"></v-text-field>
+              <v-text-field label="Candidate Stack" v-model="evaluation.candidateStack"></v-text-field>
               <v-text-field label="First Name" v-model="evaluation.firstName"></v-text-field>
               <v-text-field label="Last Name" v-model="evaluation.lastName"></v-text-field>
               <v-file-input
@@ -30,12 +30,12 @@
               </v-text-field>
               <v-text-field
                 label="Evaluator First Name"
-                v-model="evaluation.evaluatorFirstName"
+                v-model="evaluatorFirstName"
                 readonly
               ></v-text-field>
               <v-text-field
                 label="Evaluator Last Name"
-                v-model="evaluation.evaluatorLastName"
+                v-model="evaluatorLastName"
                 readonly
               ></v-text-field>
               <v-menu
@@ -66,7 +66,7 @@
       </v-card-text>
     </v-card>
 
-    <v-dialog v-model="evaluatorDialog" max-width="800px">
+    <v-dialog v-model="evaluatorDialog" class="custom-dialog" max-width="800px">
       <v-card>
         <v-card-title>Select Evaluator</v-card-title>
         <v-card-text>
@@ -87,17 +87,18 @@ import { getEvaluators, assignEvaluation, uploadResume } from '../../../services
 
 const form = ref(null);
 const evaluation = reactive({
-  soId: '',
-  soRole: '',
-  associateId: '',
-  stack: '',
+  candidateId: '',
+  candidateStack: '',
   firstName: '',
   lastName: '',
-  evaluatorId: '',
-  evaluatorFirstName: '',
-  evaluatorLastName: '',
+  soId: '',
+  soRole: '',
   evaluationDate: null,
+  status: 'PENDING',
+  evaluatorId: '',
 });
+const evaluatorFirstName = ref('');
+const evaluatorLastName = ref('');
 const resumeFile = ref(null);
 const dateMenu = ref(false);
 const today = new Date().toISOString().substr(0, 10);
@@ -116,19 +117,38 @@ const findEvaluator = async () => {
 };
 
 const openEvaluatorDialog = async () => {
-  evaluators.value = await getEvaluators();
-  evaluatorDialog.value = true;
+  try {
+    const response = await getEvaluators();
+    evaluators.value = response.data.map(evaluator => ({
+      id: evaluator.associateId,
+      name: `${evaluator.firstName} ${evaluator.lastName}`,
+      role: evaluator.role,
+      pendingEvaluations: evaluator.pendingEvaluations,
+      completedEvaluations: evaluator.completedEvaluations,
+      raw: evaluator
+    }));
+    console.log(evaluators.value);
+    evaluatorDialog.value = true;
+  } catch (error) {
+    console.error("Error fetching evaluators:", error);
+    // Optionally, show a user-friendly error message
+  }
 };
 
 const selectEvaluator = (evaluator) => {
   evaluation.evaluatorId = evaluator.id;
-  evaluation.evaluatorFirstName = evaluator.firstName;
-  evaluation.evaluatorLastName = evaluator.lastName;
+  evaluatorFirstName.value = evaluator.firstName;
+  evaluatorLastName.value = evaluator.lastName;
   evaluatorDialog.value = false;
 };
 
 const submitForm = async () => {
-  const assignedEvaluation = await assignEvaluation(evaluation);
+  const payload = {
+    ...evaluation,
+    candidateId: parseInt(evaluation.candidateId, 10),
+    evaluatorId: parseInt(evaluation.evaluatorId, 10),
+  };
+  const assignedEvaluation = await assignEvaluation(payload);
   if (resumeFile.value) {
     await uploadResume(resumeFile.value, assignedEvaluation.id);
   }
