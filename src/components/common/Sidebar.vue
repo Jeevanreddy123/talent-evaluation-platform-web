@@ -52,6 +52,14 @@
             <v-list-item-title>Evaluate Candidate</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item link to="/lookup-question">
+          <v-list-item-action>
+            <v-icon>mdi-book-search</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Question Lookup</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </div>
     </v-list>
   </v-navigation-drawer>

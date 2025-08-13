@@ -136,7 +136,7 @@ const openEvaluatorDialog = async () => {
 };
 
 const selectEvaluator = (evaluator) => {
-  evaluation.evaluatorId = evaluator.id;
+  evaluation.evaluatorId = evaluator.associateId;
   evaluatorFirstName.value = evaluator.firstName;
   evaluatorLastName.value = evaluator.lastName;
   evaluatorDialog.value = false;
