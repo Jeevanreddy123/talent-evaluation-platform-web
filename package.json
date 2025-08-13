@@ -16,6 +16,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@vueform/slider": "^2.1.10",
     "axios": "^1.11.0",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
