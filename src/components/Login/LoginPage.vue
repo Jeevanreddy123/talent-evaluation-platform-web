@@ -109,7 +109,7 @@ const login = async () => {
     if (user.role === 'Admin') {
       router.push('/admin-home').catch(err => console.error('Router push to AdminHome failed:', err));
     } else if (user.role === 'Evaluator') {
-      router.push('/evaluator/home').catch(err => console.error('Router push to EvaluatorHome failed:', err));
+      router.push('/evaluator-home').catch(err => console.error('Router push to EvaluatorHome failed:', err));
     } else {
       console.warn(`Unhandled user role: ${user.role}. Redirecting to home.`);
       router.push({ name: 'Home' }).catch(err => console.error('Router push to Home failed:', err)); // Assuming a generic 'Home' route exists

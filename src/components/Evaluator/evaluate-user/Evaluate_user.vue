@@ -1,9 +1,5 @@
 <template>
   <div class="evaluation-form-only">
-    <!-- Breadcrumb Header -->
-    <div class="breadcrumb-header">
-      <div class="breadcrumb">You are here : / My Account / Home</div>
-    </div>
     <!-- Candidate Details -->
     <section class="candidate-details">
       <h3>Candidate Details</h3>

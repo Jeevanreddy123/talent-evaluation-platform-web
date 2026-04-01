@@ -1,7 +1,7 @@
 import axios from './axios/axios-instance';
 
 export const assignEvaluation = (data) => {
-  return axios.post('/admin/assign-evaluation', data);
+  return axios.post('/evaluation/add-evaluation', data);
 };
 
 export const uploadResume = (file, candidateId) => {
@@ -15,11 +15,11 @@ export const uploadResume = (file, candidateId) => {
 };
 
 export const getEvaluators = () => {
-  return axios.get('/admin/evaluators');
+  return axios.get('/user/evaluators');
 };
 
 export const uploadFile = (formData) => {
-  return axios.post('/admin/upload-file', formData, {
+  return axios.post('/file', formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -36,10 +36,14 @@ export const downloadUploadedFile = (fileId) => {
   });
 };
 
+export const getUsers = () => {
+  return axios.get('/user/all');
+};
+
 export const deleteUploadedFile = (fileId) => {
   return axios.delete(`/admin/delete-file/${fileId}`);
 };
 
 export const updateUser = (userData) => {
-  return axios.put('/admin/user', userData);
+  return axios.put('/user', userData);
 };

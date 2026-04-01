@@ -34,7 +34,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import UserUpdateDialog from './UserUpdateDialog.vue';
-// import { getUsers } from '../../../services/admin-home'; // Assuming a getUsers function exists
+import { getUsers } from '../../../services/admin-home'; // Assuming a getUsers function exists
 
 const search = ref('');
 const users = ref([]);
@@ -44,14 +44,19 @@ const headers = [
   { title: 'Last Name', value: 'lastName' },
   { title: 'Tech Stack', value: 'techStack' },
   { title: 'Project Role', value: 'projectRole' },
-  { title: 'System Role', value: 'systemRole' },
+  { title: 'System Role', value: 'role' },
   { title: 'Actions', value: 'actions', sortable: false },
 ];
 const updateDialog = ref(false);
 const selectedUser = ref(null);
 
 const fetchUsers = async () => {
-  // users.value = await getUsers(); // Replace with actual API call
+  try {
+    const response = await getUsers();
+    users.value = response.data;
+  } catch (error) {
+    console.error('Error fetching users:', error);
+  }
 };
 
 const openUpdateDialog = (user) => {
